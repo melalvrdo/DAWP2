@@ -1,0 +1,97 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>Campus UES - Inscripciones de Alumnos</title>
+</h:head>
+
+<h:body>
+        <p:card style="margin: 5% 5% 5% 5%">
+            <f:facet name="title">Inscripciones Ciclo 2 - 2024</f:facet>
+
+        <h:form id="inscripcionesForm">
+            <h:inputHidden id="id" value="#{inscripcionController.inscripcion.id}" />
+            <!-- Menú con botones estilizados y margen entre ellos -->
+            <h:panelGrid columns="3" style="text-align: center;" columnClasses="menu-item, menu-item, menu-item">
+                <p:commandButton value="Alumnos" icon="pi pi-users" onclick="window.location.href = 'alumno.xhtml'" styleClass="ui-button" style="margin-right: 30px;"/>
+                <p:commandButton value="Materias" icon="pi pi-book" onclick="window.location.href = 'materia.xhtml'" styleClass="ui-button" style="margin-right: 30px;"/>
+                <p:commandButton value="Inscripciones" icon="pi pi-pencil" onclick="window.location.href = 'inscripcion.xhtml'" styleClass="ui-button" style="margin-right: 30px;"/>
+            </h:panelGrid>
+            
+            <p:panelGrid columns="2" layout="grid">
+                <p:outputLabel value="Alumno: "/>
+                <p:autoComplete id="alumno" value="#{inscripcionController.inscripcion.alumno}" dropdown="true"
+                                completeMethod="#{alumnoController.completeAlumnos}"
+                                var="al"
+                                converter="#{alumnoConverter}"
+                                itemLabel="#{al.nombre}"
+                                itemValue="#{al}"/>
+                
+                <p:outputLabel value="Materia: "/>
+                <p:autoComplete id="materia" value="#{inscripcionController.inscripcion.materia}" dropdown="true"
+                                completeMethod="#{materiaController.completeMaterias}"
+                                var="mat"
+                                converter="#{materiaConverter}"
+                                itemLabel="#{mat.nombre}"
+                                itemValue="#{mat}"/>
+                
+                <p:outputLabel value="Ciclo: "/>
+                <p:inputText id="ciclo" value="#{inscripcionController.inscripcion.ciclo}"/>
+
+                <p:outputLabel value="Año: "/>
+                <p:inputText id="anio" value="#{inscripcionController.inscripcion.anio}"/>
+
+                <p:outputLabel value="Fecha de Inscripción: "/>
+                <p:calendar id="fechaInscripcion" value="#{inscripcionController.inscripcion.fechaInscripcion}" pattern="dd/MM/yyyy"/>
+            </p:panelGrid>
+
+            <p:panelGrid columns="4" layout="grid">
+                <p:commandButton value="Guardar" icon="pi pi-save" actionListener="#{inscripcionController.guardarInscripcion}" 
+                                 update="tablaInscripciones inscripcionesForm"/>
+            </p:panelGrid>
+        </h:form>
+    </p:card>
+
+    <p:card style="margin: 5%">
+        <h1>Listado de Inscripciones</h1>
+
+        <h:form id="tablaInscripciones">
+            <p:dataTable rows="5" paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+                         value="#{inscripcionController.inscripcionesList}" var="inscripcion">
+
+                <p:column headerText="Alumno">
+                    <h:outputText value="#{inscripcion.alumno.nombre}" />
+                </p:column>
+                <p:column headerText="Materia">
+                    <h:outputText value="#{inscripcion.materia.nombre}" />
+                </p:column>
+                <p:column headerText="Ciclo">
+                    <h:outputText value="#{inscripcion.ciclo}" />
+                </p:column>
+                <p:column headerText="Año">
+                    <h:outputText value="#{inscripcion.anio}" />
+                </p:column>
+                <p:column headerText="Fecha Inscripción">
+                    <h:outputText value="#{inscripcion.fechaInscripcion}" />
+                </p:column>
+                <p:column headerText="Acciones">
+                        <p:commandButton value="Eliminar" icon="pi pi-trash" update=":tablaInscripciones" 
+                                         style="background-color: red" 
+                                         actionListener="#{inscripcionController.eliminarInscripcion(inscripcion)}">
+                            <p:confirm header="Confirmar" 
+                                       message="¿Realmente desea eliminar la inscripcion?" icon="pi pi-info-circle"/>
+                        </p:commandButton>
+                   </p:column>
+            </p:dataTable>
+        </h:form>
+    </p:card>
+</h:body>
+</html>
